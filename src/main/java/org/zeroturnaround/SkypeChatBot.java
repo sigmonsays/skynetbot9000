@@ -14,7 +14,7 @@ public class SkypeChatBot {
   private static final Logger log = LoggerFactory.getLogger(SkypeChatBot.class);
 
   public static void main(String[] args) throws Exception {
-    initConfiguration();
+    _initConfiguration();
     WebServer.startWebServer();
     SkypeEngine bot = new SkypeEngine();
     bot.start();
@@ -24,7 +24,7 @@ public class SkypeChatBot {
     WebServer.stopWebServer();
   }
 
-  private static void initConfiguration() {
+  private static void _initConfiguration() {
     Properties props = new Properties();
 
     File propsFile = new File("personal.properties");
