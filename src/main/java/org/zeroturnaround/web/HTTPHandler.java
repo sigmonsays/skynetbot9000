@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.zeroturnaround.SkypeEngine;
+import org.zeroturnaround.Configuration;
 
 public class HTTPHandler extends AbstractHandler {
 
