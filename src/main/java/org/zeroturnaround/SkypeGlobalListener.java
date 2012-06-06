@@ -17,8 +17,6 @@ import com.skype.api.Message;
 import com.skype.api.Message.MessageListener;
 import com.skype.api.Message.PROPERTY;
 import com.skype.api.Skype.PROXYTYPE;
-import com.skype.api.Skype.QUALITYTESTRESULT;
-import com.skype.api.Skype.QUALITYTESTTYPE;
 import com.skype.api.Skype.SkypeListener;
 import com.skype.api.SkypeObject;
 import com.skype.ipc.RootObject.ErrorListener;
@@ -157,16 +155,5 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener, Conv
       log.debug("Found the conversation, posting");
       convo.PostText(message, false);
     }
-  }
-
-  @Override
-  public void OnH264Activated() {
-    log.debug("OnH264Activated");
-  }
-
-  @Override
-  public void OnQualityTestResult(QUALITYTESTTYPE testType, QUALITYTESTRESULT testResult, String withUser,
-      String details, String xmlDetails) {
-    log.debug("onQualityTestResult");    
   }
 }

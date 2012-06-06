@@ -6,7 +6,7 @@ public class WebServer {
   private static Server server;
 
   public static void startWebServer() {
-    server = new Server(2500);
+    server = new Server(Configuration.port);
     server.setHandler(new HTTPHandler());
     try {
       server.start();

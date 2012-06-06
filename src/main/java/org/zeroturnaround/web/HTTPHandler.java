@@ -21,7 +21,7 @@ public class HTTPHandler extends AbstractHandler {
     String message = null;
     String group = null;
 
-    if ("/post".equals(target)) {
+    if (target.equals(Configuration.postUrl)) {
       String[] tmp = request.getParameterValues("message");
       if (tmp != null && tmp.length > 0) {
         message = tmp[0];
