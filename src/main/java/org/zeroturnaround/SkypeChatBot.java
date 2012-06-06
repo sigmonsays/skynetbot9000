@@ -49,8 +49,10 @@ public class SkypeChatBot {
     Configuration.skypeUsername = props.getProperty("username", null);
     Configuration.skypePassword = props.getProperty("password", null);
     Configuration.pemFile = props.getProperty("pemfile", null);
+    Configuration.portNumber = props.getProperty("port", 2500);
+    Configuration.postUrl = props.getProperty("postUrl", "/");
     if (Configuration.pemFile == null || Configuration.skypePassword == null || Configuration.skypeUsername == null) {
-      String msg = "Unable to find username, password or pemfile from project.properties nor persona.properties. Exiting";
+      String msg = "Unable to find username, password or pemfile from a project.properties or personal.properties file. Exiting";
       log.error(msg);
       System.err.println(msg);
       System.exit(1);
