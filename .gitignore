@@ -2,5 +2,6 @@ personal.properties
 target
 .classpath
 .settings
+.project
 rebel.xml
 etc
