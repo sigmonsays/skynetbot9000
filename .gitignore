@@ -5,3 +5,4 @@ target
 .project
 rebel.xml
 etc
+lib/com/skype/skype-sdk/1.0/skype-sdk-1.0.jar*
