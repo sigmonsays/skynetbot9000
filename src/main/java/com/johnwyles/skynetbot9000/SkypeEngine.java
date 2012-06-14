@@ -20,54 +20,54 @@ import com.skype.ipc.Transport;
 import com.skype.util.PemReader;
 
 public class SkypeEngine extends Thread {
-	private static final Logger log = LoggerFactory
+	private static final Logger _log = LoggerFactory
 			.getLogger(SkypeEngine.class);
-	private static Transport transport;
-	private static Skype skype_instance;
+	private static Transport _transport;
+	private static Skype _skypeInstance;
 
 	public SkypeEngine() {
-		skype_instance = new Skype();
+		_skypeInstance = new Skype();
 	}
 
 	public void run() {
 		try {
-			SkypeGlobalListener listener = connectToSkype();
-			while (transport.isConnected()) {
-				log.debug("Connected");
+			SkypeGlobalListener listener = _connectToSkype();
+			while (_transport.isConnected()) {
+				_log.debug("Connected");
 				Thread.sleep(60000);
 			}
-			tearDownSkype(listener);
+			_tearDownSkype(listener);
 		} catch (IOException e) {
-			log.debug("Skype thread hickup", e);
+			_log.debug("Skype thread hickup", e);
 		} catch (InterruptedException e) {
-			log.debug("Skype thread hickup", e);
+			_log.debug("Skype thread hickup", e);
 		} finally {
 			SkypeChatBot.stop();
 		}
 	}
 
-	private void tearDownSkype(SkypeGlobalListener listener) throws IOException {
-		log.debug("Connection lost. Cleaning up.");
+	private void _tearDownSkype(SkypeGlobalListener listener) throws IOException {
+		_log.debug("Connection lost. Cleaning up.");
 
-		unRegisterAllListeners(skype_instance, listener);
+		_unRegisterAllListeners(_skypeInstance, listener);
 
-		if (transport != null) {
-			transport.disconnect();
+		if (_transport != null) {
+			_transport.disconnect();
 		}
 
-		if (skype_instance != null) {
-			skype_instance.Close();
+		if (_skypeInstance != null) {
+			_skypeInstance.Close();
 		}
 	}
 
-	private SkypeGlobalListener connectToSkype() {
-		log.debug("skypeConnect()");
+	private SkypeGlobalListener _connectToSkype() {
+		_log.debug("skypeConnect()");
 
 		PemReader certAsPem;
 		X509Certificate cert;
 		PrivateKey privateKey;
 		try {
-			log.debug("Using pem file " + Configuration.pemFile);
+			_log.debug("Using pem file " + Configuration.pemFile);
 			certAsPem = new PemReader(Configuration.pemFile);
 			cert = certAsPem.getCertificate();
 			privateKey = certAsPem.getKey();
@@ -78,29 +78,26 @@ public class SkypeEngine extends Thread {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 		Transport socketTransport = new TCPSocketTransport("127.0.0.1", 8963);
-
-		transport = new TLSServerTransport(socketTransport, cert, privateKey);
-
-		log.debug("new TLSServerTransport created, calling skype.Init()...");
+		_transport = new TLSServerTransport(socketTransport, cert, privateKey);
+		_log.debug("new TLSServerTransport created, calling skype.Init()...");
 		SkypeGlobalListener skypeListener = new SkypeGlobalListener();
-
-		registerAllListeners(skype_instance, skypeListener);
-
+		_registerAllListeners(_skypeInstance, skypeListener);
 		try {
-			skype_instance.Init(transport);
-			skype_instance.Start();
+			_skypeInstance.Init(_transport);
+			_skypeInstance.Start();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
 		try {
-			if (transport.isConnected()) {
-				log.debug("calling GetVersionString");
-				String version = skype_instance.GetVersionString();
-				log.debug("Skype version " + version);
+			if (_transport.isConnected()) {
+				_log.debug("calling GetVersionString");
+				String version = _skypeInstance.GetVersionString();
+				_log.debug("Skype version " + version);
 
-				Account account = skype_instance
+				Account account = _skypeInstance
 						.GetAccount(Configuration.skypeUsername);
 				account.LoginWithPassword(Configuration.skypePassword, false,
 						true);
@@ -108,10 +105,11 @@ public class SkypeEngine extends Thread {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 		return skypeListener;
 	}
 
-	private static void registerAllListeners(Skype skype,
+	private static void _registerAllListeners(Skype skype,
 			SkypeGlobalListener skypeListener) {
 		skype.RegisterListener(Skype.getmoduleid(), skypeListener);
 		skype.RegisterListener(Message.moduleID(), skypeListener);
@@ -119,7 +117,7 @@ public class SkypeEngine extends Thread {
 		skype.SetErrorListener(skypeListener);
 	}
 
-	private static void unRegisterAllListeners(Skype skype,
+	private static void _unRegisterAllListeners(Skype skype,
 			SkypeGlobalListener skypeListener) {
 		skype.UnRegisterListener(Skype.getmoduleid(), skypeListener);
 		skype.UnRegisterListener(Message.moduleID(), skypeListener);
@@ -127,7 +125,7 @@ public class SkypeEngine extends Thread {
 	}
 
 	public static boolean post(String group, String message) {
-		Conversation[] convos = skype_instance
+		Conversation[] convos = _skypeInstance
 				.GetConversationList(LIST_TYPE.ALL_CONVERSATIONS);
 		for (int i = 0; i < convos.length; i++) {
 			String groupName = convos[i]
@@ -137,6 +135,7 @@ public class SkypeEngine extends Thread {
 				return true;
 			}
 		}
+
 		return false;
 	}
 }

@@ -20,10 +20,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author shelajev
  * 
  */
-public class FunTrivia implements Command {
-	public static final String COMMAND = "fun-trivia";
-
-	private static final Logger log = LoggerFactory.getLogger(FunTrivia.class);
+public class Trivia extends Command {
+	private static final Logger _log = LoggerFactory.getLogger(Trivia.class);
 
 	private static final String BAD_DAY = "Today is a sad day, no fun trivia for you, my dear friend";
 	private static final int NUMBER_OF_SENTENCES = 2;
@@ -34,10 +32,7 @@ public class FunTrivia implements Command {
 	private static final SAXParserFactory spf = SAXParserFactory.newInstance();
 
 	@Override
-	public String execute(String cmdStr) {
-		if (!COMMAND.equalsIgnoreCase(cmdStr)) {
-			return null;
-		}
+	public String execute() {
 		String info = null;
 		for (int i = 0; i < 7; i++) {
 			info = getRandomWikipediaInfo();
@@ -66,7 +61,7 @@ public class FunTrivia implements Command {
 			return getFirstSentences(text, NUMBER_OF_SENTENCES);
 
 		} catch (Exception e) {
-			log.debug("Unalble to get fun trivia: " + e, e);
+			_log.debug("Unalble to get fun trivia: " + e, e);
 			return BAD_DAY;
 		}
 	}

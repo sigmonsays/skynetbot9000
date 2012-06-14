@@ -12,14 +12,18 @@ import org.slf4j.LoggerFactory;
 import com.johnwyles.skynetbot9000.web.WebServer;
 
 public class SkypeChatBot {
-	private static final Logger log = LoggerFactory
+	private static String _defaultPortNumber = "2500";
+	private static String _defaultPostUrl = "/";
+	private static String _propertiesFile = "skynetbot9000.properties";
+
+	private static final Logger _log = LoggerFactory
 			.getLogger(SkypeChatBot.class);
 
 	public static void main(String[] args) throws Exception {
 		_initConfiguration();
 		WebServer.startWebServer();
-		SkypeEngine bot = new SkypeEngine();
-		bot.start();
+		SkypeEngine skypeBot = new SkypeEngine();
+		skypeBot.start();
 	}
 
 	public static void stop() {
@@ -27,37 +31,31 @@ public class SkypeChatBot {
 	}
 
 	private static void _initConfiguration() {
-		Properties props = new Properties();
+		Properties properties = new Properties();
 
-		File propsFile = new File("personal.properties");
+		File propertiesFile = new File(_propertiesFile);
 		try {
-			if (propsFile.exists()) {
-				props.load(new FileReader(propsFile));
-			} else {
-				propsFile = new File("project.properties");
-				if (propsFile.exists()) {
-					props.load(new FileReader(propsFile));
-				}
-			}
+			properties.load(new FileReader(propertiesFile));
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("Unable to read properties file "
-					+ propsFile.getAbsolutePath(), e);
+					+ propertiesFile.getAbsolutePath(), e);
 		} catch (IOException e) {
 			throw new RuntimeException("Unable to read properties file "
-					+ propsFile.getAbsolutePath(), e);
+					+ propertiesFile.getAbsolutePath(), e);
 		}
 
-		Configuration.skypeUsername = props.getProperty("username", null);
-		Configuration.skypePassword = props.getProperty("password", null);
-		Configuration.pemFile = props.getProperty("pemFile", null);
-		Configuration.portNumber = props.getProperty("portNumber", null);
-		Configuration.postUrl = props.getProperty("postUrl", null);
+		Configuration.skypeUsername = properties.getProperty("username", null);
+		Configuration.skypePassword = properties.getProperty("password", null);
+		Configuration.pemFile = properties.getProperty("pemFile", null);
+		Configuration.portNumber = properties.getProperty("portNumber", _defaultPortNumber);
+		Configuration.postUrl = properties.getProperty("postUrl", _defaultPostUrl);
+
 		if (Configuration.pemFile == null
 				|| Configuration.skypePassword == null
 				|| Configuration.skypeUsername == null) {
-			String msg = "Unable to find username, password or pemfile from a project.properties or personal.properties file. Exiting";
-			log.error(msg);
-			System.err.println(msg);
+			String errorMessage = "Unable to find username, password or pemfile from a project.properties or personal.properties file. Exiting";
+			_log.error(errorMessage);
+			System.err.println(errorMessage);
 			System.exit(1);
 		}
 	}

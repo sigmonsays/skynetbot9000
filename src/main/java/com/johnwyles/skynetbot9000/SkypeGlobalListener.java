@@ -1,7 +1,9 @@
 package com.johnwyles.skynetbot9000;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +23,22 @@ import com.skype.api.Skype.SkypeListener;
 import com.skype.api.SkypeObject;
 import com.skype.ipc.RootObject.ErrorListener;
 
-public class SkypeGlobalListener implements MessageListener, SkypeListener,
-		ConversationListener, ErrorListener {
-	private static final String BOT_MSG_PREFIX = "bot:";
-	private static final Logger log = LoggerFactory
+public class SkypeGlobalListener implements MessageListener, SkypeListener, ConversationListener, ErrorListener {
+	public static final String BOT_MSG_PREFIX = "!";
+	private static final Logger _log = LoggerFactory
 			.getLogger(SkypeGlobalListener.class);
-	private static Map<String, Conversation> conversations = new HashMap<String, Conversation>();
+	private static Map<String, Conversation> _conversations = new HashMap<String, Conversation>();
 
 	@Override
-	public void OnPropertyChange(SkypeObject obj, PROPERTY prop, Object value) {
-		log.debug("OnPropChange");
-		log.debug(obj.toString());
-		log.debug(prop.toString());
-		if (value != null)
-			log.debug(value.toString());
-		log.debug("OnPropChange");
+	public void OnPropertyChange(SkypeObject skypeObject, PROPERTY property, Object value) {
+		String propertyString = skypeObject.toString() + "." + property.toString() + " = ";
+		if (value != null) {
+			propertyString += value.toString();
+		} else {
+			propertyString += "null";
+		}
+
+		_log.debug("OnPropertyChange: " + propertyString);
 	}
 
 	@Override
@@ -56,58 +59,62 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener,
 	}
 
 	@Override
-	public void OnMessage(Message message, boolean changesInboxTimestamp,
-			Message supersedesHistoryMessage, Conversation conversation) {
-
+	public void OnMessage(Message message, boolean changesInboxTimestamp, Message supersedesHistoryMessage, Conversation conversation) {
 		String author = message.GetStrProperty(Message.PROPERTY.author);
-		log.debug("Incoming message from " + author);
+		_log.debug("Incoming message from " + author);
 
 		int type = message.GetIntProperty(Message.PROPERTY.type);
-		log.debug("SKYPE.OnMessage." + author + " Message::TYPE = "
+		_log.debug("SKYPE.OnMessage." + author + " Message::TYPE = "
 				+ Message.TYPE.get(type));
-		log.debug("CHAT." + author + ";oid=" + conversation.getOid() + ":"
+		_log.debug("CHAT." + author + ";oid=" + conversation.getOid() + ":"
 				+ message.GetStrProperty(Message.PROPERTY.body_xml));
 
 		String conversationStr = conversation
 				.GetStrProperty(Conversation.PROPERTY.displayname);
-		conversations.put(conversationStr, conversation);
+		_conversations.put(conversationStr, conversation);
 		String identity = conversation
 				.GetStrProperty(Conversation.PROPERTY.identity);
-		log.info("convo display name = " + conversationStr);
-		log.info("convo identity = " + identity);
+		_log.info("convo display name = " + conversationStr);
+		_log.info("convo identity = " + identity);
 
-		String msgStr = message.GetStrProperty(Message.PROPERTY.body_xml);
+		String messageString = message.GetStrProperty(Message.PROPERTY.body_xml);
 
 		// ignore the processing of our own messages to avoid
 		// indefinite loop
 		if (Configuration.skypeUsername.equals(author)) {
-			log.debug("Ignoring command because it is from "
-					+ Configuration.skypeUsername);
+			_log.debug("Ignoring command because it is from " + Configuration.skypeUsername);
 			return;
 		}
 
-		if (msgStr.startsWith(BOT_MSG_PREFIX)) {
-			String result = processCommand(msgStr);
+		if (messageString.startsWith(BOT_MSG_PREFIX)) {
+			String[] commandString = messageString.split("\\s+");
+			String command = commandString[0].replaceFirst(Pattern.quote(BOT_MSG_PREFIX), "");
+			String[] arguments = Arrays.copyOfRange(commandString, 1, commandString.length);
+
+			String result = _processCommand(command, arguments);
 			if (result != null) {
 				conversation.PostText(result, false);
 			}
-		} else {
-			log.debug("Not an actual command, the prefix " + BOT_MSG_PREFIX
-					+ " is not present");
 		}
 	}
 
-	private String processCommand(String msgStr) {
-		String cmdStr = msgStr.replaceFirst(BOT_MSG_PREFIX, "").trim();
-		log.info("Got command " + cmdStr);
-
-		Command cmd = CommandFactory.getCommand(cmdStr);
-		if (cmd != null) {
-			return cmd.execute(cmdStr);
-		} else {
-			log.error("Unable to get an actual command for the command string "
-					+ cmdStr);
+	private String _processCommand(String command, String[] arguments) {
+		if (!CommandFactory.respondsTo(command)) {
+			_log.info("Got invalid command: " + command);
+			return "Invalid command received: '" + command + "' is not a recognized command.";
 		}
+
+		Command commandInstance = CommandFactory.getCommand(command);
+		if (commandInstance != null) {
+			if (arguments.length > 0) {
+				return commandInstance.execute(arguments);
+			} else {
+				return commandInstance.execute();
+			}
+		} else {
+			_log.error("Unable to get an actual command for the command string " + command);
+		}
+
 		return null;
 	}
 
@@ -128,39 +135,39 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener,
 	}
 
 	@Override
-	public void OnPropertyChange(SkypeObject obj,
-			com.skype.api.Conversation.PROPERTY prop, Object value) {
-		log.debug("onPropertyCHange listener called - doing nothing");
+	public void OnPropertyChange(SkypeObject skypeObject,
+			com.skype.api.Conversation.PROPERTY property, Object value) {
+		_log.debug("onPropertyCHange listener called - doing nothing");
 	}
 
 	@Override
-	public void OnParticipantListChange(SkypeObject obj) {
+	public void OnParticipantListChange(SkypeObject skypeObject) {
 	}
 
 	@Override
-	public void OnMessage(SkypeObject obj, Message message) {
-		log.debug("OnMessage" + obj + message);
+	public void OnMessage(SkypeObject skypeObject, Message message) {
+		_log.debug("OnMessage" + skypeObject + message);
 	}
 
 	@Override
-	public void OnSpawnConference(SkypeObject obj, Conversation spawned) {
+	public void OnSpawnConference(SkypeObject skypeObject, Conversation spawned) {
 	}
 
 	@Override
 	public void OnSkypeKitFatalError() {
-		log.debug("OnSkypeKitFatalError");
+		_log.debug("OnSkypeKitFatalError");
 	}
 
 	@Override
 	public void OnSkypeKitConnectionClosed() {
-		log.debug("OnSkypeKitConnectionClosed");
+		_log.debug("OnSkypeKitConnectionClosed");
 	}
 
 	public static void postToChat(String chatName, String message) {
-		log.debug("PostToChat=" + chatName);
-		Conversation convo = conversations.get(chatName);
+		_log.debug("PostToChat=" + chatName);
+		Conversation convo = _conversations.get(chatName);
 		if (convo != null) {
-			log.debug("Found the conversation, posting");
+			_log.debug("Found the conversation, posting");
 			convo.PostText(message, false);
 		}
 	}
