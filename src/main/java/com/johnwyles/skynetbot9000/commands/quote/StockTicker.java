@@ -26,20 +26,23 @@ public class StockTicker {
 	public StockTicker(String symbol) {
 		_symbol = symbol;
 	}
-	
+
 	public static StockTicker getInstance(String symbol) {
 		if (_instanceMap.get(symbol) == null) {
-			_log.debug("SYMBOL: " + symbol);
 			_instanceMap.put(symbol, new StockTicker(symbol));
 		}
 
 		return _instanceMap.get(symbol);
 	}
 
+	// TODO: Clean up formatting
 	public String toString() {
 		// Zynga, Inc. (ZNGA) [$3.713B] [4:00pm]: $5.05 / $+0.07 (+1.31%) [21507137/19780600]
-		String preformattedString = "%1$s (%2$s) [$%3$s] [%4$s]: $%5$s / $%6$s (%7$s) [%8$s / %9$s]";
-		return String.format(preformattedString, getName(), getSymbol(), getMarketCapitalization(), getLastTradeTime(), getLastTradePriceOnly(), getChange(), getChangeinPercent(), getVolume(), getAverageDailyVolume());
+		String preformattedString = "%1$s (%2$s) [$%3$s] [%4$s]: $%5$s $%6$s (%7$s) [%8$s / %9$s]";
+		return String.format(preformattedString, getName(), getSymbol(),
+				getMarketCapitalization(), getLastTradeTime(),
+				getLastTradePriceOnly(), getChange(), getChangeinPercent(),
+				getVolume(), getAverageDailyVolume());
 	}
 
 	public String getSymbol() {
@@ -65,7 +68,7 @@ public class StockTicker {
 	public void setMarketCapitalization(String marketCapitalization) {
 		this._marketCapitalization = marketCapitalization;
 	}
-	
+
 	public String getLastTradePriceOnly() {
 		return _lastTradePriceOnly;
 	}

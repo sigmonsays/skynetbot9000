@@ -24,7 +24,6 @@ import com.skype.api.SkypeObject;
 import com.skype.ipc.RootObject.ErrorListener;
 
 public class SkypeGlobalListener implements MessageListener, SkypeListener, ConversationListener, ErrorListener {
-	public static final String BOT_MSG_PREFIX = "!";
 	private static final Logger _log = LoggerFactory
 			.getLogger(SkypeGlobalListener.class);
 	private static Map<String, Conversation> _conversations = new HashMap<String, Conversation>();
@@ -79,16 +78,16 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener, Conv
 
 		String messageString = message.GetStrProperty(Message.PROPERTY.body_xml);
 
-		// ignore the processing of our own messages to avoid
-		// indefinite loop
-		if (Configuration.skypeUsername.equals(author)) {
-			_log.debug("Ignoring command because it is from " + Configuration.skypeUsername);
+		// Ignore the processing of our own messages
+		if (Configuration.getSkypeUsername().equals(author)) {
+			_log.debug("Ignoring message because it is from us: " + Configuration.getSkypeUsername());
 			return;
 		}
 
-		if (messageString.startsWith(BOT_MSG_PREFIX)) {
+		// TODO: Can we clean this up a bit?
+		if (messageString.startsWith(Configuration.getBotCommandPrefix())) {
 			String[] commandString = messageString.split("\\s+");
-			String command = commandString[0].replaceFirst(Pattern.quote(BOT_MSG_PREFIX), "");
+			String command = commandString[0].replaceFirst(Pattern.quote(Configuration.getBotCommandPrefix()), "");
 			String[] arguments = Arrays.copyOfRange(commandString, 1, commandString.length);
 
 			String result = _processCommand(command, arguments);
@@ -98,6 +97,7 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener, Conv
 		}
 	}
 
+	// TODO: Can we clean this up?
 	private String _processCommand(String command, String[] arguments) {
 		if (!CommandFactory.respondsTo(command)) {
 			_log.info("Got invalid command: " + command);

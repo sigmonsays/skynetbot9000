@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.johnwyles.skynetbot9000.web.WebServer;
 
 public class SkypeChatBot {
+	private static String _defaultCommandPrefix = "!";
 	private static String _defaultPortNumber = "2500";
 	private static String _defaultPostUrl = "/";
 	private static String _propertiesFile = "skynetbot9000.properties";
@@ -44,15 +45,16 @@ public class SkypeChatBot {
 					+ propertiesFile.getAbsolutePath(), e);
 		}
 
-		Configuration.skypeUsername = properties.getProperty("username", null);
-		Configuration.skypePassword = properties.getProperty("password", null);
-		Configuration.pemFile = properties.getProperty("pemFile", null);
-		Configuration.portNumber = properties.getProperty("portNumber", _defaultPortNumber);
-		Configuration.postUrl = properties.getProperty("postUrl", _defaultPostUrl);
+		Configuration.setSkypeUsername(properties.getProperty("username", null));
+		Configuration.setSkypePassword(properties.getProperty("password", null));
+		Configuration.setSkypePemFile(properties.getProperty("pemFile", null));
+		Configuration.setWebPortNumber(properties.getProperty("portNumber", _defaultPortNumber));
+		Configuration.setWebPostUrl(properties.getProperty("postUrl", _defaultPostUrl));
+		Configuration.setBotCommandPrefix(properties.getProperty("postUrl", _defaultCommandPrefix));
 
-		if (Configuration.pemFile == null
-				|| Configuration.skypePassword == null
-				|| Configuration.skypeUsername == null) {
+		if (Configuration.getSkypePemFile() == null
+				|| Configuration.getSkypePassword() == null
+				|| Configuration.getSkypeUsername() == null) {
 			String errorMessage = "Unable to find username, password or pemfile from a project.properties or personal.properties file. Exiting";
 			_log.error(errorMessage);
 			System.err.println(errorMessage);

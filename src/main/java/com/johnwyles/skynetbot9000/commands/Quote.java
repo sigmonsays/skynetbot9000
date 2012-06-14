@@ -26,8 +26,10 @@ public class Quote extends Command {
 	private static final Logger _log = LoggerFactory.getLogger(Quote.class);
 	private static final SAXParserFactory _saxParserFactory = SAXParserFactory
 			.newInstance();
-	
+
 	// TODO: Break up to URI
+	// TODO: Switch to JSON
+	// TODO: Add bad ticker check
 	private static final String _YQL_QUOTES_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(__LIST_OF_TICKERS__)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 	private static final String _YQL_QUOTELIST_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quoteslist%20where%20symbol%20in%20(__LIST_OF_TICKERS__)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
@@ -38,10 +40,11 @@ public class Quote extends Command {
 
 	@Override
 	public String execute(String[] arguments) {
-		// TODO: This needs to be cleaner / Different string replacement a la URI Builder
+		// TODO: This needs to be cleaner / Different string replacement a la
+		// URI Builder
 		String stockTickersUrlString = "";
 		try {
-			
+
 			for (String ticker : arguments) {
 				stockTickersUrlString += "\"" + ticker + "\", ";
 			}
@@ -65,11 +68,12 @@ public class Quote extends Command {
 			saxParser.parse(yqlQuoteslistApiUrl, quotesHandler);
 
 			String quotesString = "";
-			for (Map.Entry<String, StockTicker> entry : quotesHandler.stockTickers.entrySet()) {
+			for (Map.Entry<String, StockTicker> entry : quotesHandler.stockTickers
+					.entrySet()) {
 				quotesString += entry.getValue().toString() + "\n";
 			}
 			quotesString = quotesString.trim();
-			
+
 			return quotesString;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -84,21 +88,24 @@ public class Quote extends Command {
 
 		private String _elementValue;
 		private StockTicker _stockTicker;
-		
+
+		@Override
 		public void startElement(String uri, String localName,
 				String elementName, Attributes attributes) throws SAXException {
 			if (elementName.equalsIgnoreCase("quote")) {
-				_stockTicker = StockTicker.getInstance(attributes.getValue("symbol"));
+				_stockTicker = StockTicker.getInstance(attributes
+						.getValue("symbol"));
 			}
 		}
 
-	    @Override
-	    public void characters(char[] ac, int i, int j) throws SAXException {
-	        _elementValue = new String(ac, i, j);
-	    }
+		@Override
+		public void characters(char[] ac, int i, int j) throws SAXException {
+			_elementValue = new String(ac, i, j);
+		}
 
+		@Override
 		public void endElement(String s, String s1, String elementName)
-				throws SAXException {			
+				throws SAXException {
 			if (elementName.equalsIgnoreCase("quote")) {
 				if (stockTickers.get(_stockTicker.getSymbol()) == null) {
 					stockTickers.put(_stockTicker.getSymbol(), _stockTicker);

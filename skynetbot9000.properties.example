@@ -1,5 +1,6 @@
-username=_YOUR_USERNAME_
-password=_YOUR_PASSWORD_
-pemFile=certificate.pem
-portNumber=2500
-postUrl=/
+skypeUsername=_YOUR_USERNAME_
+skypePassword=_YOUR_PASSWORD_
+skypePemFile=certificate.pem
+webPortNumber=2500
+webPostUrl=/
+botCommandPrefix=!

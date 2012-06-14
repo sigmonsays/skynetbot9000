@@ -4,25 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandFactory {
-	private static Map<String, Command> cmds = new HashMap<String, Command>();
+	private static Map<String, Command> availableCommands = new HashMap<String, Command>();
 
 	static {
-		cmds.put("trivia", new Trivia());
-		cmds.put("quote", new Quote());
-		cmds.put("time", new Time());
+		availableCommands.put("quote", new Quote());
+		availableCommands.put("reddit", new Reddit());
+		availableCommands.put("links", new Links());
 	}
 
 	public static Command getCommand(String command) {
 		command = command.toLowerCase();
 		if (respondsTo(command)) {
-			return cmds.get(command);
+			return availableCommands.get(command);
 		}
 
 		return null;
 	}
 
 	public static boolean respondsTo(String command) {
-		if (cmds.containsKey(command)) {
+		if (availableCommands.containsKey(command)) {
 			return true;
 		}
 

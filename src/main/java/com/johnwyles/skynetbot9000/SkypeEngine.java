@@ -67,8 +67,8 @@ public class SkypeEngine extends Thread {
 		X509Certificate cert;
 		PrivateKey privateKey;
 		try {
-			_log.debug("Using pem file " + Configuration.pemFile);
-			certAsPem = new PemReader(Configuration.pemFile);
+			_log.debug("Using pem file " + Configuration.getSkypePemFile());
+			certAsPem = new PemReader(Configuration.getSkypePemFile());
 			cert = certAsPem.getCertificate();
 			privateKey = certAsPem.getKey();
 		} catch (FileNotFoundException e1) {
@@ -98,8 +98,8 @@ public class SkypeEngine extends Thread {
 				_log.debug("Skype version " + version);
 
 				Account account = _skypeInstance
-						.GetAccount(Configuration.skypeUsername);
-				account.LoginWithPassword(Configuration.skypePassword, false,
+						.GetAccount(Configuration.getSkypeUsername());
+				account.LoginWithPassword(Configuration.getSkypePassword(), false,
 						true);
 			}
 		} catch (IOException e) {
