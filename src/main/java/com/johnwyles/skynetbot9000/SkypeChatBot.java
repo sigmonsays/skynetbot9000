@@ -45,12 +45,12 @@ public class SkypeChatBot {
 					+ propertiesFile.getAbsolutePath(), e);
 		}
 
-		Configuration.setSkypeUsername(properties.getProperty("username", null));
-		Configuration.setSkypePassword(properties.getProperty("password", null));
-		Configuration.setSkypePemFile(properties.getProperty("pemFile", null));
-		Configuration.setWebPortNumber(properties.getProperty("portNumber", _defaultPortNumber));
-		Configuration.setWebPostUrl(properties.getProperty("postUrl", _defaultPostUrl));
-		Configuration.setBotCommandPrefix(properties.getProperty("postUrl", _defaultCommandPrefix));
+		Configuration.setSkypeUsername(properties.getProperty("skypeUsername", null));
+		Configuration.setSkypePassword(properties.getProperty("skypePassword", null));
+		Configuration.setSkypePemFile(properties.getProperty("skypePemFile", null));
+		Configuration.setWebPortNumber(properties.getProperty("webPortNumber", _defaultPortNumber));
+		Configuration.setWebPostUrl(properties.getProperty("webPostUrl", _defaultPostUrl));
+		Configuration.setBotCommandPrefix(properties.getProperty("botCommandPrefix", _defaultCommandPrefix));
 
 		if (Configuration.getSkypePemFile() == null
 				|| Configuration.getSkypePassword() == null
