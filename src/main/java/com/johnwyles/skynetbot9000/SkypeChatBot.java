@@ -12,53 +12,58 @@ import org.slf4j.LoggerFactory;
 import com.johnwyles.skynetbot9000.web.WebServer;
 
 public class SkypeChatBot {
-	private static String _defaultCommandPrefix = "!";
-	private static String _defaultPortNumber = "2500";
-	private static String _defaultPostUrl = "/";
-	private static String _propertiesFile = "skynetbot9000.properties";
+    private static String _defaultCommandPrefix = "!";
+    private static String _defaultPortNumber = "2500";
+    private static String _defaultPostUrl = "/";
+    private static String _propertiesFile = "skynetbot9000.properties";
 
-	private static final Logger _log = LoggerFactory
-			.getLogger(SkypeChatBot.class);
+    private static final Logger _log = LoggerFactory
+	    .getLogger(SkypeChatBot.class);
 
-	public static void main(String[] args) throws Exception {
-		_initConfiguration();
-		WebServer.startWebServer();
-		SkypeEngine skypeBot = new SkypeEngine();
-		skypeBot.start();
+    public static void main(String[] args) throws Exception {
+	_initConfiguration();
+	WebServer.startWebServer();
+	SkypeEngine skypeBot = new SkypeEngine();
+	skypeBot.start();
+    }
+
+    public static void stop() {
+	WebServer.stopWebServer();
+    }
+
+    private static void _initConfiguration() {
+	Properties properties = new Properties();
+	File propertiesFile = new File(_propertiesFile);
+
+	try {
+	    properties.load(new FileReader(propertiesFile));
+	} catch (Exception e) {
+	    throw new RuntimeException(
+		    "[ERROR] Unable to read properties file "
+			    + propertiesFile.getAbsolutePath(), e);
 	}
 
-	public static void stop() {
-		WebServer.stopWebServer();
+	Configuration.setSkypeUsername(properties.getProperty("skypeUsername",
+		null));
+	Configuration.setSkypePassword(properties.getProperty("skypePassword",
+		null));
+	Configuration.setSkypePemFile(properties.getProperty("skypePemFile",
+		null));
+	Configuration.setWebPortNumber(properties.getProperty("webPortNumber",
+		_defaultPortNumber));
+	Configuration.setWebPostUrl(properties.getProperty("webPostUrl",
+		_defaultPostUrl));
+	Configuration.setBotCommandPrefix(properties.getProperty(
+		"botCommandPrefix", _defaultCommandPrefix));
+
+	if (Configuration.getSkypePemFile() == null
+		|| Configuration.getSkypePassword() == null
+		|| Configuration.getSkypeUsername() == null) {
+	    String errorMessage = "[ERROR] Unable to find skypeUsername, skypePassword or skypePemfile from the '"
+		    + propertiesFile.getAbsolutePath() + "' file.";
+	    _log.error(errorMessage);
+	    System.err.println(errorMessage);
+	    System.exit(1);
 	}
-
-	private static void _initConfiguration() {
-		Properties properties = new Properties();
-
-		File propertiesFile = new File(_propertiesFile);
-		try {
-			properties.load(new FileReader(propertiesFile));
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Unable to read properties file "
-					+ propertiesFile.getAbsolutePath(), e);
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to read properties file "
-					+ propertiesFile.getAbsolutePath(), e);
-		}
-
-		Configuration.setSkypeUsername(properties.getProperty("skypeUsername", null));
-		Configuration.setSkypePassword(properties.getProperty("skypePassword", null));
-		Configuration.setSkypePemFile(properties.getProperty("skypePemFile", null));
-		Configuration.setWebPortNumber(properties.getProperty("webPortNumber", _defaultPortNumber));
-		Configuration.setWebPostUrl(properties.getProperty("webPostUrl", _defaultPostUrl));
-		Configuration.setBotCommandPrefix(properties.getProperty("botCommandPrefix", _defaultCommandPrefix));
-
-		if (Configuration.getSkypePemFile() == null
-				|| Configuration.getSkypePassword() == null
-				|| Configuration.getSkypeUsername() == null) {
-			String errorMessage = "Unable to find username, password or pemfile from a project.properties or personal.properties file. Exiting";
-			_log.error(errorMessage);
-			System.err.println(errorMessage);
-			System.exit(1);
-		}
-	}
+    }
 }

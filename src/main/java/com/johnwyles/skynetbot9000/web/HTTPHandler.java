@@ -11,35 +11,37 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import com.johnwyles.skynetbot9000.Configuration;
 import com.johnwyles.skynetbot9000.SkypeEngine;
+import com.skype.api.Conversation;
+import com.skype.api.Conversation.LIST_TYPE;
 
 public class HTTPHandler extends AbstractHandler {
-	@Override
-	public void handle(String target, Request baseRequest,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-		response.setContentType("text/html");
-		response.setStatus(HttpServletResponse.SC_OK);
+    @Override
+    public void handle(String target, Request baseRequest,
+	    HttpServletRequest request, HttpServletResponse response)
+	    throws IOException, ServletException {
+	response.setContentType("text/html");
+	response.setStatus(HttpServletResponse.SC_OK);
 
-		String message = null;
-		String group = null;
+	String message = null;
+	String group = null;
 
-		if (target.equals(Configuration.getWebPostUrl())) {
-			String[] tmp = request.getParameterValues("message");
-			if (tmp != null && tmp.length > 0) {
-				message = tmp[0];
-			}
+	if (target.equals(Configuration.getWebPostUrl())) {
+	    String[] tmp = request.getParameterValues("message");
+	    if (tmp != null && tmp.length > 0) {
+		message = tmp[0];
+	    }
 
-			tmp = request.getParameterValues("group");
-			if (tmp != null && tmp.length > 0) {
-				group = tmp[0];
-			}
+	    tmp = request.getParameterValues("group");
+	    if (tmp != null && tmp.length > 0) {
+		group = tmp[0];
+	    }
 
-			boolean result = SkypeEngine.post(group, message);
-			if (result)
-				response.getWriter().println("OK");
-			else
-				response.getWriter().println("FAIL");
-		}
-		((Request) request).setHandled(true);
+	    boolean result = SkypeEngine.post(group, message);
+	    if (result)
+		response.getWriter().println("OK");
+	    else
+		response.getWriter().println("FAIL");
 	}
+	((Request) request).setHandled(true);
+    }
 }

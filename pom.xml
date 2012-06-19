@@ -143,22 +143,31 @@
 				<version>1.1.1</version>
 				<executions>
 					<execution>
+						<id>skypekit-start</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-integration-test</phase>
+						<configuration>
+							<executable>src/test/run/scripts/run.sh</executable>
+							<arguments>
+								<argument>./skypekit-mac-x86</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
 						<phase>test</phase>
 						<goals>
 							<goal>java</goal>
 						</goals>
 						<configuration>
 							<mainClass>com.johnwyles.skynetbot9000.SkypeChatBot</mainClass>
-							<!--
-							<arguments>
-								<argument>myArg1</argument>
-								<argument>myArg2</argument>
-							</arguments>
-							-->
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>
