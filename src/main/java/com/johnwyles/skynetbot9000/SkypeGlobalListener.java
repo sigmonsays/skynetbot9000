@@ -3,7 +3,6 @@ package com.johnwyles.skynetbot9000;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.johnwyles.skynetbot9000.commands.Command;
 import com.johnwyles.skynetbot9000.commands.CommandFactory;
-import com.johnwyles.skynetbot9000.commands.Links;
+import com.johnwyles.skynetbot9000.listeners.ListenerFactory;
 import com.skype.api.Contact;
 import com.skype.api.ContactGroup;
 import com.skype.api.Conversation;
@@ -70,20 +69,14 @@ public class SkypeGlobalListener implements MessageListener, SkypeListener,
 		+ messageString);
 
 	_conversations.put(chatName, conversation);
-
+	
 	// Ignore processing messages we sent
 	if (author.equalsIgnoreCase(Configuration.getSkypeUsername())) {
 	    return;
 	}
 
-	Pattern urlPattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
-	Matcher urlMatcher = urlPattern.matcher(messageString);
-	while (urlMatcher.find()) {
-	    String urlMatch = urlMatcher.group();
-	    Links.addLink(chatName, author, urlMatch);
-	    _log.debug("Message contains a URL: " + urlMatch);
-	}
-
+	ListenerFactory.onMessage(chatName, author, messageString);
+	
 	// TODO: Can we clean this up?
 	if (messageString.startsWith(Configuration.getBotCommandPrefix())) {
 	    String[] commandString = messageString.split("\\s+");

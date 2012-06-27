@@ -6,10 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.johnwyles.skynetbot9000.commands.Quote;
-
-public class StockTicker {
-    private static final Logger _log = LoggerFactory.getLogger(Quote.class);
+public class Stock {
+    private static final Logger _log = LoggerFactory.getLogger(Stock.class);
 
     private String _name;
     private String _symbol;
@@ -21,15 +19,15 @@ public class StockTicker {
     private String _volume;
     private String _averageDailyVolume;
 
-    private static Map<String, StockTicker> _instanceMap = new HashMap<String, StockTicker>();
+    private static Map<String, Stock> _instanceMap = new HashMap<String, Stock>();
 
-    public StockTicker(String symbol) {
+    public Stock(String symbol) {
 	_symbol = symbol;
     }
 
-    public static StockTicker getInstance(String symbol) {
+    public static Stock getInstance(String symbol) {
 	if (_instanceMap.get(symbol) == null) {
-	    _instanceMap.put(symbol, new StockTicker(symbol));
+	    _instanceMap.put(symbol, new Stock(symbol));
 	}
 
 	return _instanceMap.get(symbol);

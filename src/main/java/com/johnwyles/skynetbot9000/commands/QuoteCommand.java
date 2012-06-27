@@ -17,22 +17,26 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.johnwyles.skynetbot9000.commands.quote.StockTicker;
+import com.johnwyles.skynetbot9000.commands.quote.Stock;
 
 /**
  *
  */
-public class Quote extends Command {
-    private static final Logger _log = LoggerFactory.getLogger(Quote.class);
+public class QuoteCommand extends Command {
+    private static final Logger _log = LoggerFactory.getLogger(QuoteCommand.class);
     private static final SAXParserFactory _saxParserFactory = SAXParserFactory
 	    .newInstance();
 
     // TODO: Break up to URI
     // TODO: Switch to JSON
     // TODO: Add bad ticker check
-    private static final String _YQL_QUOTES_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(__LIST_OF_TICKERS__)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-    private static final String _YQL_QUOTELIST_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quoteslist%20where%20symbol%20in%20(__LIST_OF_TICKERS__)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+    private static final String _YQL_TICKERS_TOKEN = "__LIST_OF_TICKERS__";
+    private static final String _YQL_QUOTES_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(" + _YQL_TICKERS_TOKEN + ")&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+    private static final String _YQL_QUOTELIST_API_URL = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quoteslist%20where%20symbol%20in%20(" + _YQL_TICKERS_TOKEN + ")&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
+//    private static final String _YQL_QUOTES_API_QUERY = "select * from yahoo.finance.quoteslist where symbol in (" + _YQL_TICKERS_TOKEN + ")";
+//    private static final URI _YQL_QUOTES_API_URL = UriBuilder.fromUri("http://query.yahooapis.com").queryParam("q", "").build();
+    
     @Override
     public String execute() {
 	return "Please specify a stock ticker or list of tickers separated by a space (e.g. 'ZNGA' or 'ZNGA FB GRPN').";
@@ -57,9 +61,9 @@ public class Quote extends Command {
 	}
 
 	String yqlQuotesApiUrl = _YQL_QUOTES_API_URL.replaceAll(
-		"__LIST_OF_TICKERS__", stockTickersUrlString);
+		_YQL_TICKERS_TOKEN, stockTickersUrlString);
 	String yqlQuoteslistApiUrl = _YQL_QUOTELIST_API_URL.replaceAll(
-		"__LIST_OF_TICKERS__", stockTickersUrlString);
+		_YQL_TICKERS_TOKEN, stockTickersUrlString);
 
 	try {
 	    SAXParser saxParser = _saxParserFactory.newSAXParser();
@@ -68,7 +72,7 @@ public class Quote extends Command {
 	    saxParser.parse(yqlQuoteslistApiUrl, quotesHandler);
 
 	    String quotesString = "";
-	    for (Map.Entry<String, StockTicker> entry : quotesHandler.stockTickers
+	    for (Map.Entry<String, Stock> entry : quotesHandler.stockTickers
 		    .entrySet()) {
 		quotesString += entry.getValue().toString() + "\n";
 	    }
@@ -84,16 +88,16 @@ public class Quote extends Command {
     }
 
     private static class QuotesHandler extends DefaultHandler {
-	public Map<String, StockTicker> stockTickers = new HashMap<String, StockTicker>();
+	public Map<String, Stock> stockTickers = new HashMap<String, Stock>();
 
 	private String _elementValue;
-	private StockTicker _stockTicker;
+	private Stock _stockTicker;
 
 	@Override
 	public void startElement(String uri, String localName,
 		String elementName, Attributes attributes) throws SAXException {
 	    if (elementName.equalsIgnoreCase("quote")) {
-		_stockTicker = StockTicker.getInstance(attributes
+		_stockTicker = Stock.getInstance(attributes
 			.getValue("symbol"));
 	    }
 	}
