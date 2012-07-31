@@ -1,7 +1,7 @@
 package com.johnwyles.skynetbot9000.commands;
 
 import java.util.ArrayList;
-import java.util.LinksIterator;
+import java.util.ListIterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import com.johnwyles.skynetbot9000.listeners.LinksListener;
 
 public class LinksCommand extends Command {
     private static final Logger _log = LoggerFactory.getLogger(LinksCommand.class);
-    private static final Integer _defaultLinkCount = 20;
+    public Integer defaultLinkCount = 20;
 
     public String execute() {
 	String linksString = "";
@@ -18,8 +18,8 @@ public class LinksCommand extends Command {
 	ArrayList<String> links = LinksListener.getLinks(this._chatName);
 
 	if (links != null) {
-            ListIterator linksIterator = links.listIterator(links.size());
-	    while(linksIterator.hasPrevious() && linkCount < _defaultLinkCount) {
+            ListIterator<String> linksIterator = links.listIterator(links.size());
+	    while(linksIterator.hasPrevious() && linkCount < defaultLinkCount) {
 		linksString += linksIterator.previous() + "\n";
                 linkCount++;
 	    }
@@ -29,6 +29,15 @@ public class LinksCommand extends Command {
     }
 
     public String execute(String[] arguments) {
-	return null;
+	Integer linkCount = Integer.parseInt(arguments[0]);
+	if (linkCount > LinksListener.MAX_LINK_COUNT) {
+	    defaultLinkCount = LinksListener.MAX_LINK_COUNT;
+	} else if (linkCount <= 0) {
+	    defaultLinkCount = 1;
+	} else {
+	    defaultLinkCount = linkCount;
+	}
+
+	return execute();
     }
 }
