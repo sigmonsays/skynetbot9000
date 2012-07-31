@@ -30,7 +30,7 @@ public class LinksListener extends Listener {
     private void _addLink(String chatName, String author, String link) {
 	ArrayList<String> authorLinks = _links.get(chatName);
 	if (authorLinks != null && authorLinks.size() >= MAX_LINK_COUNT) {
-	    authorLinks.remove(0);
+	    authorLinks.remove(MAX_LINK_COUNT - 1);
 	    authorLinks.trimToSize();
 	} else if (authorLinks == null) {
 	    authorLinks = new ArrayList<String>();
