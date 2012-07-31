@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class LinksListener extends Listener {
     private static final Logger _log = LoggerFactory.getLogger(LinksListener.class);
     private static HashMap<String, ArrayList<String>> _links = new HashMap<String, ArrayList<String>>();
-    private static final Integer _MAX_CACHE_COUNT = 10;
+    private static final Integer _MAX_CACHE_COUNT = 100;
 
     public void onMessage(String chatName, String author, String message) {
 	Pattern urlPattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");

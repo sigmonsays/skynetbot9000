@@ -142,7 +142,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.1.1</version>
 				<executions>
-					<execution>
+<!--					<execution>
 						<id>skypekit-start</id>
 						<goals>
 							<goal>exec</goal>
@@ -156,6 +156,7 @@
 						</configuration>
 					</execution>
 
+
 					<execution>
 						<phase>test</phase>
 						<goals>
@@ -165,7 +166,7 @@
 							<mainClass>com.johnwyles.skynetbot9000.SkypeChatBot</mainClass>
 						</configuration>
 					</execution>
-				</executions>
+-->				</executions>
 			</plugin>
 
 		</plugins>
