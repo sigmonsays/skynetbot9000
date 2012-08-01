@@ -122,6 +122,8 @@ public class QuoteCommand extends Command {
 		_stockTicker.setLastTradePriceOnly(_elementValue);
 	    } else if (elementName.equalsIgnoreCase("LastTradeTime")) {
 		_stockTicker.setLastTradeTime(_elementValue);
+	    } else if (elementName.equalsIgnoreCase("BookValue")) {
+		_stockTicker.setBookValue(_elementValue);
 	    } else if (elementName.equalsIgnoreCase("AverageDailyVolume")) {
 		_stockTicker.setAverageDailyVolume(_elementValue);
 	    } else if (elementName.equalsIgnoreCase("Volume")) {

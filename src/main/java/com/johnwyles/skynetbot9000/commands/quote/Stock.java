@@ -12,6 +12,7 @@ public class Stock {
     private String _name;
     private String _symbol;
     private String _marketCapitalization;
+    private String _bookValue;
     private String _lastTradePriceOnly;
     private String _lastTradeTime;
     private String _change;
@@ -35,11 +36,11 @@ public class Stock {
 
     // TODO: Clean up formatting
     public String toString() {
-	// Zynga, Inc. (ZNGA) [$3.713B] [4:00pm]: $5.05 / $+0.07 (+1.31%)
+	// Zynga, Inc. (ZNGA) [$3.713B] [$2.25] [4:00pm]: $5.05 / $+0.07 (+1.31%) [8978685 / 25220000]
 	// [21507137/19780600]
-	String preformattedString = "%1$s (%2$s) [$%3$s] [%4$s]: $%5$s $%6$s (%7$s) [%8$s / %9$s]";
+	String preformattedString = "%1$s (%2$s) [$%3$s] [$%4$s] [%5$s]: $%6$s $%7$s (%8$s) [%9$s / %10$s]";
 	return String.format(preformattedString, getName(), getSymbol(),
-		getMarketCapitalization(), getLastTradeTime(),
+		getMarketCapitalization(), getBookValue(), getLastTradeTime(),
 		getLastTradePriceOnly(), getChange(), getChangeinPercent(),
 		getVolume(), getAverageDailyVolume());
     }
@@ -67,6 +68,15 @@ public class Stock {
     public void setMarketCapitalization(String marketCapitalization) {
 	this._marketCapitalization = marketCapitalization;
     }
+
+    public String getBookValue() {
+	return _bookValue;
+    }
+
+    public void setBookValue(String bookValue) {
+	this._bookValue = bookValue;
+    }
+
 
     public String getLastTradePriceOnly() {
 	return _lastTradePriceOnly;
