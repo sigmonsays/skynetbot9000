@@ -129,7 +129,7 @@ public class SkypeEngine extends Thread {
 	for (int i = 0; i < conversations.length; i++) {
 	    String groupName = conversations[i]
 		    .GetStrProperty(Conversation.PROPERTY.displayname);
-	    if (group.equals(groupName)) {
+	    if (groupName.contains(groupName)) {
 		conversations[i].PostText(message, false);
 		return true;
 	    }
