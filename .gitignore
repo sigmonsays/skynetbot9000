@@ -3,6 +3,4 @@
 certificate.*
 skynetbot9000.properties
 .settings
-lib/com/skype/skype-sdk/1.0/skype-sdk-1.0.jar
-lib/jar
 target
